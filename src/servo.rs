@@ -25,7 +25,7 @@ pub use self::servo::compositing::compositor_thread::EventLoopWaker;
 pub use self::servo::compositing::windowing::WebRenderDebugOption;
 pub use self::servo::gl;
 pub use self::servo::msg::constellation_msg::{Key, KeyModifiers, KeyState};
-pub use self::servo::msg::constellation_msg::{SHIFT, CONTROL, ALT, SUPER};
+//pub use self::servo::msg::constellation_msg::{SHIFT, CONTROL, ALT, SUPER};
 pub use self::servo::servo_url::ServoUrl;
 pub use self::servo::style_traits::cursor::Cursor as ServoCursor;
 
@@ -196,7 +196,7 @@ impl Servo {
 
     pub fn update_geometry(&self, geometry: DrawableGeometry) {
         self.callbacks.geometry.set(geometry);
-        let event = WindowEvent::Resize(self.callbacks.framebuffer_size());
+        let event = WindowEvent::Resize;
         self.events_for_servo.borrow_mut().push(event);
     }
 
