@@ -24,7 +24,7 @@ pub use self::servo::BrowserId;
 pub use self::servo::compositing::compositor_thread::EventLoopWaker;
 pub use self::servo::compositing::windowing::WebRenderDebugOption;
 pub use self::servo::gl;
-pub use self::servo::msg::constellation_msg::{Key, KeyModifiers, KeyState};
+pub use self::servo::msg::constellation_msg::{Key, KeyModifiers, KeyState, TopLevelBrowsingContextId};
 //pub use self::servo::msg::constellation_msg::{SHIFT, CONTROL, ALT, SUPER};
 pub use self::servo::servo_url::ServoUrl;
 pub use self::servo::style_traits::cursor::Cursor as ServoCursor;
@@ -316,6 +316,16 @@ impl ServoCallbacks {
 impl WindowMethods for ServoCallbacks {
     fn prepare_for_composite(&self, _width: usize, _height: usize) -> bool {
         true
+    }
+
+    fn screen_size(&self, _ctx: TopLevelBrowsingContextId) -> Size2D<u32> {
+        let (width, height) = self.geometry.get().view_size;
+        TypedSize2D::new(width,height)
+    }
+
+    fn screen_avail_size(&self, _ctx: TopLevelBrowsingContextId) -> Size2D<u32> {
+        let (width, height) = self.geometry.get().view_size;
+        TypedSize2D::new(width,height)
     }
 
     fn supports_clipboard(&self) -> bool {
