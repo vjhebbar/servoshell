@@ -319,13 +319,15 @@ impl WindowMethods for ServoCallbacks {
     }
 
     fn screen_size(&self, _ctx: TopLevelBrowsingContextId) -> Size2D<u32> {
+        let scale_factor = self.geometry.get().hidpi_factor as u32;
         let (width, height) = self.geometry.get().view_size;
-        TypedSize2D::new(width,height)
+        TypedSize2D::new(scale_factor * width, scale_factor * height)
     }
 
     fn screen_avail_size(&self, _ctx: TopLevelBrowsingContextId) -> Size2D<u32> {
+        let scale_factor = self.geometry.get().hidpi_factor as u32;
         let (width, height) = self.geometry.get().view_size;
-        TypedSize2D::new(width,height)
+        TypedSize2D::new(scale_factor * width, scale_factor * height)
     }
 
     fn supports_clipboard(&self) -> bool {
