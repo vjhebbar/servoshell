@@ -479,8 +479,8 @@ impl WindowMethods for ServoCallbacks {
     }
     
     fn print_microdata(&self, data: String) {
-        self.event_queue
-            .borrow_mut()
-            .push(ServoEvent::PrintMicrodata(data));
-    }
+        self.event_queue
+            .borrow_mut()
+            .push(ServoEvent::PrintMicrodata(data));
+    }
 }
