@@ -538,6 +538,9 @@ fn handle_servo_event(_servo: &Servo,
         ServoEvent::OpenInDefaultBrowser(url) => {
             open::that(url).ok();
         }
+        ServoEvent::PrintMicrodata(data) => {
+            println!("{:?}", data);
+        }
     };
     Ok(())
 }
