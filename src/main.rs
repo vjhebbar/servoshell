@@ -539,7 +539,7 @@ fn handle_servo_event(_servo: &Servo,
             open::that(url).ok();
         }
         ServoEvent::PrintMicrodata(data) => {
-            println!("{:?}", data);
+            println!("{}", data);
         }
     };
     Ok(())
