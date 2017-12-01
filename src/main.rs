@@ -47,7 +47,12 @@ mod logs;
 use platform::App;
 use servo::{Servo, ServoEvent, ServoUrl, WebRenderDebugOption};
 use state::{AppState, State, WindowState};
+use std::env;
 use std::env::args;
+use std::error::Error;
+use std::io::prelude::*;
+use std::fs::File;
+use std::path::Path;
 use std::rc::Rc;
 use traits::app::{AppEvent, AppCommand, AppMethods};
 use traits::view::*;
@@ -538,8 +543,38 @@ fn handle_servo_event(_servo: &Servo,
         ServoEvent::OpenInDefaultBrowser(url) => {
             open::that(url).ok();
         }
-        ServoEvent::PrintMicrodata(data) => {
-            println!("{}", data);
+        ServoEvent::PrintMicrodata(data, datatype) => {
+            match env::home_dir() {
+                Some(path) => {
+                    let file_name = match datatype.as_str() {
+                        "vcard" => {
+                            format!("{}/servoshell/microdata.vcf", path.to_str().unwrap())
+                        },
+                        "json" => {
+                            format!("{}/servoshell/microdata.json", path.to_str().unwrap())
+                        },
+                        _ => {
+                            panic!("Microdata type not passed as argument");
+                        },
+                    };
+
+                    let path = Path::new(&file_name);
+                    let mut file = match File::create(&path) {
+                        Err(why) => panic!("couldn't create: {}, {}",
+                                           file_name,
+                                           why.description()),
+                        Ok(file) => file,
+                    };
+                    match file.write_all(data.as_bytes()) {
+                        Err(why) => {
+                            panic!("couldn't write to {}: {}", file_name,
+                                                               why.description())
+                        },
+                        Ok(_) => println!("successfully wrote microdata to {}", file_name),
+                    }
+                },
+                None => println!("Impossible to get your home dir!"),
+            }
         }
     };
     Ok(())

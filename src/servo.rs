@@ -54,7 +54,7 @@ pub enum ServoEvent {
     FaviconChanged(BrowserId, ServoUrl),
     Key(Option<char>, Key, KeyModifiers),
     OpenInDefaultBrowser(&'static str),
-    PrintMicrodata(String),
+    PrintMicrodata(String, String),
 }
 
 struct LastMouseDown {
@@ -477,10 +477,10 @@ impl WindowMethods for ServoCallbacks {
             .borrow_mut()
             .push(ServoEvent::Key(ch, key, mods));
     }
-    
-    fn print_microdata(&self, data: String) {
+
+    fn print_microdata(&self, data: String, datatype: String) {
         self.event_queue
             .borrow_mut()
-            .push(ServoEvent::PrintMicrodata(data));
+            .push(ServoEvent::PrintMicrodata(data, datatype));
     }
 }
