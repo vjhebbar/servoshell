@@ -548,10 +548,10 @@ fn handle_servo_event(_servo: &Servo,
                 Some(path) => {
                     let file_name = match datatype.as_str() {
                         "vcard" => {
-                            format!("{}/servoshell/microdata.vcf", path.to_str().unwrap())
+                            format!("{}/microdata.vcf", path.to_str().unwrap())
                         },
                         "json" => {
-                            format!("{}/servoshell/microdata.json", path.to_str().unwrap())
+                            format!("{}/microdata.json", path.to_str().unwrap())
                         },
                         _ => {
                             panic!("Microdata type not passed as argument");
