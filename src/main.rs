@@ -543,7 +543,7 @@ fn handle_servo_event(_servo: &Servo,
         ServoEvent::OpenInDefaultBrowser(url) => {
             open::that(url).ok();
         }
-        ServoEvent::PrintMicrodata(data, datatype) => {
+        ServoEvent::WriteMicrodata(microdata, datatype) => {
             match env::home_dir() {
                 Some(path) => {
                     let file_name = match datatype.as_str() {
@@ -565,12 +565,26 @@ fn handle_servo_event(_servo: &Servo,
                                            why.description()),
                         Ok(file) => file,
                     };
-                    match file.write_all(data.as_bytes()) {
+                    match file.write_all(microdata.as_bytes()) {
                         Err(why) => {
                             panic!("couldn't write to {}: {}", file_name,
                                                                why.description())
                         },
-                        Ok(_) => println!("successfully wrote microdata to {}", file_name),
+                        Ok(_) => {
+                            println!("successfully wrote microdata to {}", file_name);
+                            let id = win_state
+                                .get()
+                                .tabs
+                                .ref_fg_browser()
+                                .expect("no current browser")
+                                .id;
+                            match win_state.get_mut().tabs.find_browser(&id) {
+                                Some(browser) => {
+                                    browser.title = Some(format!("Exported {}", datatype).to_string());
+                                }
+                                None => warn!("Got message for unkown browser:  {:?}", id),
+                            }
+                        },
                     }
                 },
                 None => println!("Impossible to get your home dir!"),

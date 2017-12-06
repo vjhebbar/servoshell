@@ -13,7 +13,7 @@ use self::servo::servo_geometry::DeviceIndependentPixel;
 use self::servo::euclid::{Point2D, ScaleFactor, Size2D, TypedPoint2D, TypedRect, TypedSize2D,
                           TypedVector2D};
 use self::servo::ipc_channel::ipc;
-use self::servo::script_traits::{LoadData, MouseButton, TouchEventType};
+use self::servo::script_traits::{LoadData, Microdata, MouseButton, TouchEventType};
 use self::servo::style_traits::DevicePixel;
 use self::servo::net_traits::net_error_list::NetError;
 use self::servo::webrender_api;
@@ -54,7 +54,7 @@ pub enum ServoEvent {
     FaviconChanged(BrowserId, ServoUrl),
     Key(Option<char>, Key, KeyModifiers),
     OpenInDefaultBrowser(&'static str),
-    PrintMicrodata(String, String),
+    WriteMicrodata(String, String),
 }
 
 struct LastMouseDown {
@@ -478,9 +478,19 @@ impl WindowMethods for ServoCallbacks {
             .push(ServoEvent::Key(ch, key, mods));
     }
 
-    fn print_microdata(&self, data: String, datatype: String) {
+    fn write_microdata(&self, result: Microdata) {
+        let mut microdata = String::new();
+        let mut datatype = String::new();
+
+        if let Microdata::VCardData(data_string) = result {
+            microdata = data_string;
+            datatype = "vcard".to_string();
+        } else if let Microdata::JSONData(data_string) = result {
+            microdata = data_string;
+            datatype = "json".to_string();
+        }
         self.event_queue
             .borrow_mut()
-            .push(ServoEvent::PrintMicrodata(data, datatype));
+            .push(ServoEvent::WriteMicrodata(microdata, datatype));
     }
 }
